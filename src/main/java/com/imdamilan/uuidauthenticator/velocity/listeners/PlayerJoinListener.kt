@@ -20,7 +20,6 @@ class PlayerJoinListener {
     private var connection: Connection? = null
     private var config = ConfigReader.config
     private var tableName = config.databaseTable
-    private var databaseName = config.databaseName
 
     @Subscribe
     fun onPlayerJoin(event: LoginEvent) {
@@ -81,13 +80,19 @@ class PlayerJoinListener {
         val name = player.username
 
         if (ConfigReader.config.databaseAuthEnabled) {
+            if (!UUIDAuthVelocity.sql?.isConnected!! || connection == null) {
+                UUIDAuthVelocity.sql?.connect()
+                connection = UUIDAuthVelocity.sql!!.connection
+            }
             return try {
                 val statement =
-                    connection!!.prepareStatement("SELECT `uuid` FROM `$databaseName`.`$tableName` WHERE `username` = ?;")
-                statement.setString(1, name)
+                    connection!!.prepareStatement("SELECT `uuid` FROM `$tableName` WHERE `username` = '$name';")
                 val result = statement.executeQuery()
                 result.next()
-            } catch (e: Exception) { false }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
 
         } else if (ConfigReader.config.fileAuthEnabled) {
             val file = AuthFileReader.file
@@ -115,13 +120,13 @@ class PlayerJoinListener {
         }
 
         if (ConfigReader.config.databaseAuthEnabled) {
-            val sql = "INSERT INTO `$tableName` (username, uuid) VALUES (?, ?)"
-            val statement = connection!!.prepareStatement(sql)
-            statement.setString(1, name)
-            statement.setString(2, uuid.toString())
+            if (!UUIDAuthVelocity.sql?.isConnected!! || connection == null) {
+                UUIDAuthVelocity.sql?.connect()
+                connection = UUIDAuthVelocity.sql!!.connection
+            }
+            val statement = connection!!.prepareStatement("INSERT INTO `$tableName`(`username`, `uuid`) VALUES ('$name','$uuid')")
             statement.executeUpdate()
             statement.close()
-
         } else if (ConfigReader.config.fileAuthEnabled) {
             AuthFileReader.addPlayer(name, uuid.toString())
         }

@@ -30,6 +30,13 @@ class UUIDAuthVelocity @Inject constructor(
 
     private val server: ProxyServer
 
+    companion object {
+        var sql: SQL? = null
+        var logger: Logger? = null
+        var config: Path? = null
+        private var metricsFactory: Metrics.Factory? = null
+    }
+
     init {
         if (!dataDirectory.toFile().exists()) { dataDirectory.toFile().mkdir() }
 
@@ -47,7 +54,6 @@ class UUIDAuthVelocity @Inject constructor(
 
     @Subscribe
     fun onProxyInitialization(event: ProxyInitializeEvent?) {
-        AuthFileReader.setup()
         metricsFactory!!.make(this, 15683)
         server.eventManager.register(this, PlayerJoinListener())
         if (ConfigReader.config.databaseAuthEnabled) {
@@ -59,7 +65,7 @@ class UUIDAuthVelocity @Inject constructor(
             } catch (e: ClassNotFoundException) {
                 throw RuntimeException(e)
             }
-        }
+        } else AuthFileReader.setup()
         if (ConfigReader.config.autoupdateEnabled) {
             if (Update.isLatest(102870)) {
                 logger!!.info("§aYou are using the latest version of UUIDAuthenticator!")
@@ -76,12 +82,5 @@ class UUIDAuthVelocity @Inject constructor(
                 logger!!.warn("There is a new version of UUIDAuthenticator available! Please download the new version for the latest security features!")
             }
         }
-    }
-
-    companion object {
-        var sql: SQL? = null
-        var logger: Logger? = null
-        var config: Path? = null
-        private var metricsFactory: Metrics.Factory? = null
     }
 }
