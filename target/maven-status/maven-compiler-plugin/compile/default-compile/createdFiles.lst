@@ -1,7 +1,0 @@
-com\imdamilan\uuidauthenticator\velocity\premium\MojangAPIAuth.class
-com\imdamilan\uuidauthenticator\velocity\listeners\PlayerJoinListener.class
-com\imdamilan\uuidauthenticator\velocity\config\ConfigReader.class
-velocity-plugin.json
-com\imdamilan\uuidauthenticator\velocity\sql\SQL.class
-com\imdamilan\uuidauthenticator\velocity\UUIDAuthVelocity.class
-com\imdamilan\uuidauthenticator\velocity\config\Config.class

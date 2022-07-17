@@ -1,75 +1,74 @@
-package com.imdamilan.uuidauthenticator.velocity;
+package com.imdamilan.uuidauthenticator.velocity
 
-import com.google.inject.Inject;
-import com.imdamilan.uuidauthenticator.velocity.config.ConfigReader;
-import com.imdamilan.uuidauthenticator.velocity.listeners.PlayerJoinListener;
-import com.imdamilan.uuidauthenticator.velocity.sql.SQL;
-import com.imdamilan.velocityupdater.VelocityUpdater;
-import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
-import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.plugin.Plugin;
-import com.velocitypowered.api.plugin.annotation.DataDirectory;
-import com.velocitypowered.api.proxy.ProxyServer;
-import org.bstats.velocity.Metrics;
-import org.slf4j.Logger;
+import com.google.inject.Inject
+import com.imdamilan.uuidauthenticator.velocity.config.ConfigReader
+import com.imdamilan.uuidauthenticator.velocity.listeners.PlayerJoinListener
+import com.imdamilan.uuidauthenticator.velocity.sql.SQL
+import com.imdamilan.uuidauthenticator.velocity.update.Update
+import com.velocitypowered.api.event.Subscribe
+import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
+import com.velocitypowered.api.plugin.Plugin
+import com.velocitypowered.api.plugin.annotation.DataDirectory
+import com.velocitypowered.api.proxy.ProxyServer
+import org.bstats.velocity.Metrics
+import org.slf4j.Logger
+import java.nio.file.Path
+import java.sql.SQLException
 
-import java.nio.file.Path;
-import java.sql.SQLException;
+@Plugin(id = "uuidauth", name = "UUIDAuth", version = "0.6", authors = ["ImDaMilan"])
 
-@Plugin(
-        id = "uuidauth",
-        name = "UUIDAuth",
-        version = "0.6",
-        authors = {"ImDaMilan"}
-)
+class UUIDAuthVelocity @Inject constructor(
+    server: ProxyServer,
+    logger: Logger?,
+    @DataDirectory dataDirectory: Path,
+    metricsFactory: Metrics.Factory?){
 
-public class UUIDAuthVelocity {
+    private val server: ProxyServer
 
-    public static SQL sql = null;
-    public static Logger logger = null;
-    private final ProxyServer server;
-    public static Path config;
-    private static Metrics.Factory metricsFactory;
-
-    @Inject
-    public UUIDAuthVelocity(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory, Metrics.Factory metricsFactory) {
+    init {
         if (!dataDirectory.toFile().exists()) {
-            dataDirectory.toFile().mkdir();
+            dataDirectory.toFile().mkdir()
         }
-        this.server = server;
-        UUIDAuthVelocity.logger = logger;
-        UUIDAuthVelocity.config = dataDirectory;
-        UUIDAuthVelocity.metricsFactory = metricsFactory;
+        this.server = server
+        Companion.logger = logger
+        config = dataDirectory
+        Companion.metricsFactory = metricsFactory
     }
 
     @Subscribe
-    public void onProxyInitialization(ProxyInitializeEvent event) {
-        metricsFactory.make(this, 15683);
-        server.getEventManager().register(this, new PlayerJoinListener());
-
-        sql = new SQL();
-        try { sql.connect(); }
-        catch (SQLException | ClassNotFoundException e) { throw new RuntimeException(e); }
-
-        if (ConfigReader.getConfig().autoupdateEnabled) {
-            if (VelocityUpdater.isLatest(102870)) {
-                logger.info("§aYou are using the latest version of UUIDAuthenticator!");
+    fun onProxyInitialization(event: ProxyInitializeEvent?) {
+        metricsFactory!!.make(this, 15683)
+        server.eventManager.register(this, PlayerJoinListener())
+        sql = SQL()
+        try {
+            sql!!.connect()
+        } catch (e: SQLException) {
+            throw RuntimeException(e)
+        } catch (e: ClassNotFoundException) {
+            throw RuntimeException(e)
+        }
+        if (ConfigReader.config.autoupdateEnabled) {
+            if (Update.isLatest(102870)) {
+                logger!!.info("§aYou are using the latest version of UUIDAuthenticator!")
             } else {
-                logger.info("There is a new version of UUIDAuthenticator available!");
-                logger.info("§aSince autoupdate is enabled, we will download the latest version of UUIDAuthenticator for you!");
-                VelocityUpdater.updatePlugin(102870, config);
-                logger.info("§aYou are now using the latest version of UUIDAuthenticator!");
+                logger!!.info("There is a new version of UUIDAuthenticator available!")
+                logger!!.info("§aSince autoupdate is enabled, we will download the latest version of UUIDAuthenticator for you!")
+                Update.updatePlugin(102870)
+                logger!!.info("§aYou are now using the latest version of UUIDAuthenticator!")
             }
         } else {
-            if (VelocityUpdater.isLatest(102870)) {
-                logger.info("§aYou are using the latest version of UUIDAuthenticator!");
+            if (Update.isLatest(102870)) {
+                logger!!.info("§aYou are using the latest version of UUIDAuthenticator!")
             } else {
-                logger.warn("There is a new version of UUIDAuthenticator available! Please download the new version for the latest security features!");
+                logger!!.warn("There is a new version of UUIDAuthenticator available! Please download the new version for the latest security features!")
             }
         }
     }
 
-    public static SQL getSql() {
-        return sql;
+    companion object {
+        var sql: SQL? = null
+        var logger: Logger? = null
+        var config: Path? = null
+        private var metricsFactory: Metrics.Factory? = null
     }
 }

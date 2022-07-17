@@ -1,101 +1,101 @@
-package com.imdamilan.uuidauthenticator.velocity.listeners;
+package com.imdamilan.uuidauthenticator.velocity.listeners
 
-import com.imdamilan.uuidauthenticator.velocity.UUIDAuthVelocity;
-import com.imdamilan.uuidauthenticator.velocity.config.Config;
-import com.imdamilan.uuidauthenticator.velocity.config.ConfigReader;
-import com.imdamilan.uuidauthenticator.velocity.premium.MojangAPIAuth;
-import com.imdamilan.uuidauthenticator.velocity.sql.SQL;
-import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.connection.LoginEvent;
-import com.velocitypowered.api.proxy.Player;
-import net.kyori.adventure.text.Component;
+import com.imdamilan.uuidauthenticator.velocity.UUIDAuthVelocity
+import com.imdamilan.uuidauthenticator.velocity.config.ConfigReader
+import com.imdamilan.uuidauthenticator.velocity.premium.MojangAPIAuth
+import com.imdamilan.uuidauthenticator.velocity.sql.SQL
+import com.velocitypowered.api.event.Subscribe
+import com.velocitypowered.api.event.connection.LoginEvent
+import com.velocitypowered.api.proxy.Player
+import net.kyori.adventure.text.Component
+import java.sql.*
+import java.util.*
 
-import java.sql.*;
-import java.util.Objects;
-import java.util.UUID;
+class PlayerJoinListener {
 
-import static com.imdamilan.uuidauthenticator.velocity.premium.MojangAPIAuth.parseUUID;
-
-public class PlayerJoinListener{
-
-    private Connection connection = null;
-    Config config = ConfigReader.getConfig();
-    String tableName = config.tableName;
-    String databaseName = config.databaseName;
+    private var connection: Connection? = null
+    private var config = ConfigReader.config
+    private var tableName = config.tableName
+    private var databaseName = config.databaseName
 
     @Subscribe
-    void onPlayerJoin(LoginEvent event) throws SQLException, ClassNotFoundException {
-        SQL sql = UUIDAuthVelocity.getSql();
+    fun onPlayerJoin(event: LoginEvent) {
+        val sql: SQL? = UUIDAuthVelocity.sql
         try {
-            connection = UUIDAuthVelocity.getSql().connection;
-
-            Player player = event.getPlayer();
-            UUID uuid = player.getUniqueId();
-            String name = player.getUsername();
+            connection = UUIDAuthVelocity.sql?.connection
+            val player = event.player
+            var uuid = player.uniqueId
+            val name = player.username
 
             try {
                 if (MojangAPIAuth.isPremium(name)) {
-                    uuid = UUID.fromString(parseUUID(MojangAPIAuth.getUUID(name)));
+                    uuid = UUID.fromString(MojangAPIAuth.parseUUID(MojangAPIAuth.getUUID(name)))
                 }
-            } catch (Exception e) {
-                uuid = player.getUniqueId();
+            } catch (e: Exception) {
+                uuid = player.uniqueId
             }
 
-            if (!playerExists(player)) newPlayer(player);
+            if (!playerExists(player)) newPlayer(player)
             try {
-                PreparedStatement statement = connection.prepareStatement("SELECT uuid FROM `" + tableName + "` WHERE username = ?");
-                statement.setString(1, name);
-                ResultSet result = statement.executeQuery();
-                String uuidFromDatabase = "";
+                val statement = connection!!.prepareStatement("SELECT uuid FROM `$tableName` WHERE username = ?")
+                statement.setString(1, name)
+                val result = statement.executeQuery()
+                var uuidFromDatabase: String? = ""
 
                 if (result != null) {
                     if (result.next()) {
-                        uuidFromDatabase = result.getString("uuid");
+                        uuidFromDatabase = result.getString("uuid")
                     }
                 }
-                if (!Objects.equals(uuidFromDatabase, uuid.toString())) {
-                    player.disconnect(Component.text("Your UUID is not matching to your username, are you trying to access someone else's account? If you believe this is a mistake, contact the server's admin."));
+
+                if (uuidFromDatabase != uuid.toString()) {
+                    player.disconnect(Component.text("Your UUID is not matching to your username, are you trying to access someone else's account? If you believe this is a mistake, contact the server's admin."))
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        } catch (SQLNonTransientException e) {
-            if (sql.isConnected()) sql.disconnect();
-            sql.connect();
-            event.getPlayer().disconnect(Component.text("The server had to reconnect to the database, please, try to join again in a few seconds."));
+
+        } catch (e: SQLNonTransientException) {
+            if (sql?.isConnected == true) sql.disconnect()
+            sql?.connect()
+            event.player.disconnect(Component.text("The server had to reconnect to the database, please, try to join again in a few seconds."))
         }
     }
 
-    private boolean playerExists(Player player) {
-        String name = player.getUsername();
+    private fun playerExists(player: Player): Boolean {
+        val name = player.username
 
-        try {
-            PreparedStatement statement = connection.prepareStatement("SELECT `uuid` FROM `" + databaseName + "`.`" + tableName +"` WHERE `username` = ?;");
-            statement.setString(1, name);
-            ResultSet result = statement.executeQuery();
-            return result.next();
-        } catch (Exception e) {
-            return false;
+        return try {
+            val statement =
+                connection!!.prepareStatement("SELECT `uuid` FROM `$databaseName`.`$tableName` WHERE `username` = ?;")
+            statement.setString(1, name)
+            val result = statement.executeQuery()
+            result.next()
+        } catch (e: Exception) {
+            false
         }
+
     }
 
-    private void newPlayer(Player player) throws SQLException {
-        UUID uuid = player.getUniqueId();
-        String name = player.getUsername();
+    private fun newPlayer(player: Player) {
+        var uuid = player.uniqueId
+        val name = player.username
 
         try {
             if (MojangAPIAuth.isPremium(name)) {
-                uuid = UUID.fromString(parseUUID(MojangAPIAuth.getUUID(name)));
+                uuid = UUID.fromString(MojangAPIAuth.parseUUID(MojangAPIAuth.getUUID(name)))
             }
-        } catch (Exception e) {
-            uuid = player.getUniqueId();
+        } catch (e: Exception) {
+            uuid = player.uniqueId
         }
 
-        String sql = "INSERT INTO `" + tableName + "` (username, uuid) VALUES (?, ?)";
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.setString(1, name);
-        statement.setString(2, uuid.toString());
-        statement.executeUpdate();
-        statement.close();
+        val sql = "INSERT INTO `$tableName` (username, uuid) VALUES (?, ?)"
+
+        val statement = connection!!.prepareStatement(sql)
+        statement.setString(1, name)
+        statement.setString(2, uuid.toString())
+        statement.executeUpdate()
+        statement.close()
     }
 }
