@@ -2,6 +2,7 @@ package com.imdamilan.uuidauthenticator.velocity
 
 import com.google.inject.Inject
 import com.imdamilan.uuidauthenticator.velocity.config.ConfigReader
+import com.imdamilan.uuidauthenticator.velocity.fileauth.AuthFileReader
 import com.imdamilan.uuidauthenticator.velocity.listeners.PlayerJoinListener
 import com.imdamilan.uuidauthenticator.velocity.sql.SQL
 import com.imdamilan.uuidauthenticator.velocity.update.Update
@@ -37,6 +38,7 @@ class UUIDAuthVelocity @Inject constructor(
 
     @Subscribe
     fun onProxyInitialization(event: ProxyInitializeEvent?) {
+        AuthFileReader.setup()
         metricsFactory!!.make(this, 15683)
         server.eventManager.register(this, PlayerJoinListener())
         if (ConfigReader.config.databaseAuthEnabled) {

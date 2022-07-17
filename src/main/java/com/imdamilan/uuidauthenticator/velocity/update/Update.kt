@@ -9,9 +9,11 @@ class Update {
 
     companion object {
 
+        private var current = "1.0"
+
         @JvmStatic
         fun isLatest(projectID: Int): Boolean {
-            return "1.0" == getLatest(projectID)
+            return current == getLatest(projectID)
         }
 
         @JvmStatic
@@ -31,7 +33,7 @@ class Update {
                 getVersionFromJSON(fromSite)
             } catch (var6: Exception) {
                 var6.printStackTrace()
-                "1.0"
+                current
             }
         }
 
@@ -44,7 +46,7 @@ class Update {
                 e.printStackTrace()
                 return false
             }
-            return if (!version.equals(getLatest(projectID), ignoreCase = true)) startDownload(downloadURL) else null
+            return if (!version.equals(current, ignoreCase = true)) startDownload(downloadURL) else null
         }
 
         @JvmStatic
