@@ -1,0 +1,7 @@
+{
+  "id": "uuidauth",
+  "name": "UUIDAuth",
+  "version": "1.0",
+  "authors": ["ImDaMilan"],
+  "main": "com.imdamilan.uuidauthenticator.velocity.UUIDAuthVelocity"
+}

@@ -15,7 +15,7 @@ import org.slf4j.Logger
 import java.nio.file.Path
 import java.sql.SQLException
 
-@Plugin(id = "uuidauth", name = "UUIDAuth", version = "0.6", authors = ["ImDaMilan"])
+@Plugin(id = "uuidauth", name = "UUIDAuth", version = "1.0", authors = ["ImDaMilan"])
 
 class UUIDAuthVelocity @Inject constructor(
     server: ProxyServer,
