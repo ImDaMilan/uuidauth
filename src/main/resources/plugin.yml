@@ -1,0 +1,15 @@
+name: UUIDAuthenticator
+version: '${project.version}'
+main: com.imdamilan.uuidauthenticator.spigot.UUIDAuthenticator
+api-version: 1.16
+authors: [ ImDaMilan ]
+description: A Spigot/Paper plugin that connects to a set database and authenticates players based on UUID, used for non-premium servers.
+commands:
+  connect:
+    description: Connects to the UUID database.
+    usage: /connect
+    permission: uuidauthenticator.connect
+  disconnect:
+    description: Disconnects from the UUID database.
+    usage: /disconnect
+    permission: uuidauthenticator.disconnect
