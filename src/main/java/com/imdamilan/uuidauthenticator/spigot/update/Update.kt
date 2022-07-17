@@ -25,7 +25,7 @@ class Update {
         private fun getLatest(plugin: Plugin, projectID: Int): String {
             return try {
                 val url =
-                    URL("https://api.spigotmc.org/simple/0.1/index.php?action=getResource&id=$projectID")
+                    URL("https://api.spigotmc.org/simple/0.2/index.php?action=getResource&id=$projectID")
                 val connection = url.openConnection()
                 val fromSite =
                     BufferedReader(InputStreamReader(connection.getInputStream())).readLine()
