@@ -1,11 +1,14 @@
 package com.imdamilan.uuidauthenticator.velocity
 
 import com.google.inject.Inject
+import com.imdamilan.uuidauthenticator.velocity.commands.ConnectCommand
+import com.imdamilan.uuidauthenticator.velocity.commands.DisconnectCommand
 import com.imdamilan.uuidauthenticator.velocity.config.ConfigReader
 import com.imdamilan.uuidauthenticator.velocity.fileauth.AuthFileReader
 import com.imdamilan.uuidauthenticator.velocity.listeners.PlayerJoinListener
 import com.imdamilan.uuidauthenticator.velocity.sql.SQL
 import com.imdamilan.uuidauthenticator.velocity.update.Update
+import com.velocitypowered.api.command.CommandMeta
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.plugin.Plugin
@@ -15,6 +18,7 @@ import org.bstats.velocity.Metrics
 import org.slf4j.Logger
 import java.nio.file.Path
 import java.sql.SQLException
+
 
 @Plugin(id = "uuidauth", name = "UUIDAuth", version = "1.0", authors = ["ImDaMilan"])
 
@@ -27,13 +31,18 @@ class UUIDAuthVelocity @Inject constructor(
     private val server: ProxyServer
 
     init {
-        if (!dataDirectory.toFile().exists()) {
-            dataDirectory.toFile().mkdir()
-        }
+        if (!dataDirectory.toFile().exists()) { dataDirectory.toFile().mkdir() }
+
         this.server = server
         Companion.logger = logger
         config = dataDirectory
         Companion.metricsFactory = metricsFactory
+
+        val commandManager = server.commandManager
+        var commandMeta: CommandMeta = commandManager.metaBuilder("connect").plugin(this).build()
+        commandManager.register(commandMeta, ConnectCommand())
+        commandMeta = commandManager.metaBuilder("disconnect").plugin(this).build()
+        commandManager.register(commandMeta, DisconnectCommand())
     }
 
     @Subscribe

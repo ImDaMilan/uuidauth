@@ -23,5 +23,12 @@ class AuthFileReader {
                 mapper.writeValue(file, authFile)
             }
         }
+
+        fun addPlayer(name: String, uuid: String) {
+            val authFile = authFile
+            authFile.players[name] = uuid
+            val mapper = ObjectMapper(YAMLFactory())
+            mapper.writeValue(file, authFile)
+        }
     }
 }

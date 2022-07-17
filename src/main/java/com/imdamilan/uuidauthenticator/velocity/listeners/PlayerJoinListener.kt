@@ -1,7 +1,10 @@
 package com.imdamilan.uuidauthenticator.velocity.listeners
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.imdamilan.uuidauthenticator.velocity.UUIDAuthVelocity
 import com.imdamilan.uuidauthenticator.velocity.config.ConfigReader
+import com.imdamilan.uuidauthenticator.velocity.fileauth.AuthFile
 import com.imdamilan.uuidauthenticator.velocity.fileauth.AuthFileReader
 import com.imdamilan.uuidauthenticator.velocity.premium.MojangAPIAuth
 import com.imdamilan.uuidauthenticator.velocity.sql.SQL
@@ -21,7 +24,6 @@ class PlayerJoinListener {
 
     @Subscribe
     fun onPlayerJoin(event: LoginEvent) {
-        val sql: SQL? = UUIDAuthVelocity.sql
         val player = event.player
         var uuid = player.uniqueId
         if (!playerExists(player)) newPlayer(player)
@@ -35,6 +37,7 @@ class PlayerJoinListener {
         }
 
         if (ConfigReader.config.databaseAuthEnabled) {
+            val sql: SQL? = UUIDAuthVelocity.sql
             try {
                 connection = UUIDAuthVelocity.sql?.connection
                 val name = player.username
@@ -65,7 +68,7 @@ class PlayerJoinListener {
                 event.player.disconnect(Component.text("The server had to reconnect to the database, please, try to join again in a few seconds."))
             }
         } else if (ConfigReader.config.fileAuthEnabled) {
-            val authFile = AuthFileReader.authFile.players
+            val authFile = ObjectMapper(YAMLFactory()).readValue(AuthFileReader.file, AuthFile::class.java).players
             if (authFile.containsKey(player.username)) {
                 if (authFile[player.username] != uuid.toString()) {
                     player.disconnect(Component.text("Your UUID is not matching to your username, are you trying to access someone else's account? If you believe this is a mistake, contact the server's admin."))
@@ -84,20 +87,17 @@ class PlayerJoinListener {
                 statement.setString(1, name)
                 val result = statement.executeQuery()
                 result.next()
-            } catch (e: Exception) {
-                false
-            }
+            } catch (e: Exception) { false }
 
         } else if (ConfigReader.config.fileAuthEnabled) {
             val file = AuthFileReader.file
-            if (file.exists()) {
-                val lines = file.readLines()
-                for (line in lines) {
-                    if (line.contains(name)) {
-                        return true
-                    }
+            val lines = file.readLines()
+            for (line in lines) {
+                if (line.contains(name)) {
+                    return true
                 }
             }
+            return false
         }
         return false
     }
@@ -121,12 +121,9 @@ class PlayerJoinListener {
             statement.setString(2, uuid.toString())
             statement.executeUpdate()
             statement.close()
+
         } else if (ConfigReader.config.fileAuthEnabled) {
-            AuthFileReader.authFile.players[name] = uuid.toString()
-            val file = AuthFileReader.file
-            val writer = file.writer()
-            writer.write("$name:$uuid")
-            writer.close()
+            AuthFileReader.addPlayer(name, uuid.toString())
         }
     }
 }
