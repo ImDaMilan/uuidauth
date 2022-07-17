@@ -10,12 +10,14 @@ class ConfigReader {
     companion object {
         val config: Config
             get() {
-                val configFile: File =
-                    File(UUIDAuthVelocity.Companion.config!!.toFile().getAbsolutePath(), "config.yml")
+                val configFile = File(UUIDAuthVelocity.config!!.toFile().absolutePath, "config.yml")
                 if (!configFile.exists()) {
                     try {
                         configFile.createNewFile()
-                        val config = Config("localhost", 3306, "root", "", "uuid_auth", "uuid_auth", true)
+                        val config = Config(false,"localhost", 3306, "root", "", "uuid_auth", "uuid_auth",
+                            fileAuthEnabled = false,
+                            autoupdateEnabled = true
+                        )
                         val mapper = ObjectMapper(YAMLFactory())
                         mapper.writeValue(configFile, config)
                         return config
@@ -24,8 +26,7 @@ class ConfigReader {
                     }
                 }
                 val om = ObjectMapper(YAMLFactory())
-                val configValues: Config
-                configValues = try {
+                val configValues: Config = try {
                     om.readValue(
                         configFile,
                         Config::class.java

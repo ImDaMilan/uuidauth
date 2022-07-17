@@ -39,13 +39,15 @@ class UUIDAuthVelocity @Inject constructor(
     fun onProxyInitialization(event: ProxyInitializeEvent?) {
         metricsFactory!!.make(this, 15683)
         server.eventManager.register(this, PlayerJoinListener())
-        sql = SQL()
-        try {
-            sql!!.connect()
-        } catch (e: SQLException) {
-            throw RuntimeException(e)
-        } catch (e: ClassNotFoundException) {
-            throw RuntimeException(e)
+        if (ConfigReader.config.databaseAuthEnabled) {
+            sql = SQL()
+            try {
+                sql!!.connect()
+            } catch (e: SQLException) {
+                throw RuntimeException(e)
+            } catch (e: ClassNotFoundException) {
+                throw RuntimeException(e)
+            }
         }
         if (ConfigReader.config.autoupdateEnabled) {
             if (Update.isLatest(102870)) {

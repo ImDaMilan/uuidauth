@@ -7,11 +7,11 @@ import java.sql.DriverManager
 class SQL {
 
     private var config = ConfigReader.config
-    private var address = config.address
-    private var port = config.port
-    private var tableName = config.tableName
-    private var username = config.username
-    private var password = config.password
+    private var address = config.databaseAddress
+    private var port = config.databasePort
+    private var tableName = config.databaseTable
+    private var username = config.databaseUsername
+    private var password = config.databasePassword
 
     var database = config.databaseName
     var connection: Connection? = null

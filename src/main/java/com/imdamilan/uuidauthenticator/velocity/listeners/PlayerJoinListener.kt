@@ -15,7 +15,7 @@ class PlayerJoinListener {
 
     private var connection: Connection? = null
     private var config = ConfigReader.config
-    private var tableName = config.tableName
+    private var tableName = config.databaseTable
     private var databaseName = config.databaseName
 
     @Subscribe
