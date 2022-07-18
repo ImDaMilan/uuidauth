@@ -31,7 +31,6 @@ class UUIDAuthenticator : JavaPlugin() {
 
         this.saveDefaultConfig()
         configFile = this.config
-        sql = SQL()
 
         server.pluginManager.registerEvents(PlayerJoinListener(), this)
         this.getCommand("connect")?.executor = ConnectCommand()
@@ -72,6 +71,7 @@ class UUIDAuthenticator : JavaPlugin() {
         Metrics(this, 15682)
 
         if (configFile!!.getBoolean("database.enabled")) {
+            sql = SQL()
             try { sql!!.connect() } catch (e: Exception) {
                 logger.severe("Could not connect to database!")
                 logger.severe(e.message)

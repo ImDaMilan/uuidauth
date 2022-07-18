@@ -24,7 +24,7 @@ class PlayerJoinListener : Listener {
     fun onPlayerJoin(event: PlayerJoinEvent) {
         if (config!!.getBoolean("database.enabled")) {
             try {
-                tableName = config.getString("database-table-name").toString()
+                tableName = config.getString("database.table-name").toString()
                 sql = UUIDAuthenticator.getSQL()
                 connection = sql!!.connection
 

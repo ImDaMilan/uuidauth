@@ -9,7 +9,7 @@ class Update {
 
     companion object {
 
-        private var current = "1.0"
+        private var current = "1.0.1"
 
         @JvmStatic
         fun isLatest(projectID: Int): Boolean {

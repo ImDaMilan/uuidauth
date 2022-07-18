@@ -20,7 +20,7 @@ import java.nio.file.Path
 import java.sql.SQLException
 
 
-@Plugin(id = "uuidauth", name = "UUIDAuth", version = "1.0", authors = ["ImDaMilan"])
+@Plugin(id = "uuidauth", name = "UUIDAuth", version = "1.0.1", authors = ["ImDaMilan"])
 
 class UUIDAuthVelocity @Inject constructor(
     server: ProxyServer,
