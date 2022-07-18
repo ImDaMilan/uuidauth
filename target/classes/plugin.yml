@@ -1,5 +1,5 @@
 name: UUIDAuthenticator
-version: '1.0'
+version: '1.0.1'
 main: com.imdamilan.uuidauthenticator.spigot.UUIDAuthenticator
 api-version: 1.16
 authors: [ ImDaMilan ]
