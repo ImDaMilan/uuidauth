@@ -18,11 +18,11 @@ class PlayerJoinListener : Listener {
     private var sql: SQL? = null
     private var connection: Connection? = null
     private var tableName = "uuid_authenticator"
-    private val config: FileConfiguration? = UUIDAuthenticator.getConfig()
+    private val config: FileConfiguration = UUIDAuthenticator.getConfig()
 
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
-        if (config!!.getBoolean("database.enabled")) {
+        if (config.getBoolean("database.enabled")) {
             try {
                 tableName = config.getString("database.table-name").toString()
                 sql = UUIDAuthenticator.getSQL()
@@ -86,7 +86,7 @@ class PlayerJoinListener : Listener {
 
     private fun playerExists(player: Player): Boolean {
         val name = player.name
-        if (config!!.getBoolean("database.enabled")) {
+        if (config.getBoolean("database.enabled")) {
             try {
                 val sql = "SELECT * FROM $tableName WHERE `username` = '$name'"
                 val result = connection?.createStatement()?.executeQuery(sql) ?: return false
@@ -114,7 +114,7 @@ class PlayerJoinListener : Listener {
             uuid = player.uniqueId
         }
 
-        if (config!!.getBoolean("database.enabled")) {
+        if (config.getBoolean("database.enabled")) {
 
             val sql = "INSERT INTO $tableName (username, uuid) VALUES ('$name', '$uuid')"
             connection?.createStatement()?.executeUpdate(sql)

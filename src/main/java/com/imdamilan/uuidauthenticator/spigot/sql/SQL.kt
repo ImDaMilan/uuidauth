@@ -13,14 +13,14 @@ class SQL {
     }
 
     fun connect() {
-        val config: FileConfiguration? = UUIDAuthenticator.getConfig()
+        val config: FileConfiguration = UUIDAuthenticator.getConfig()
 
-        val address = config?.getString("database.address")
-        val port = config?.getString("database.port")
-        val database = config?.getString("database.name")
-        val username = config?.getString("database.username")
-        val password = config?.getString("database.password")
-        val name = config?.getString("database.table-name")
+        val address = config.getString("database.address")
+        val port = config.getString("database.port")
+        val database = config.getString("database.name")
+        val username = config.getString("database.username")
+        val password = config.getString("database.password")
+        val name = config.getString("database.table-name")
 
         connection = java.sql.DriverManager.getConnection("jdbc:mysql://$address:$port/$database?useSSL=false", username, password)
         val connection2 = connection

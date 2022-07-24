@@ -11,16 +11,13 @@ class DisconnectCommand : CommandExecutor {
         args: Array<out String>
     ): Boolean {
         val sql = UUIDAuthenticator.getSQL()
-        if (sql != null) {
-            return if (sql.isConnected()) {
-                sql.disconnect()
-                sender.sendMessage("Disconnected from database!")
-                true
-            } else {
-                sender.sendMessage("Not connected to database!")
-                false
-            }
+        return if (sql.isConnected()) {
+            sql.disconnect()
+            sender.sendMessage("Disconnected from database!")
+            true
+        } else {
+            sender.sendMessage("Not connected to database!")
+            false
         }
-        return false
     }
 }
