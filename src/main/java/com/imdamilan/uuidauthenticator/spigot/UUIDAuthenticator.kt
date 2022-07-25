@@ -88,6 +88,7 @@ class UUIDAuthenticator : JavaPlugin() {
         configFile.addDefault("database.password", "")
         configFile.addDefault("database.table-name", "uuid_authenticator")
         configFile.addDefault("file-auth.enabled", true)
+        configFile.addDefault("kick-message", "Your UUID is not matching to your username, are you trying to access someone else's account? If you believe this is a mistake, contact the server's admin.")
         configFile.addDefault("autoupdate-enabled", true)
         configFile.options().copyDefaults(true)
         this.saveConfig()

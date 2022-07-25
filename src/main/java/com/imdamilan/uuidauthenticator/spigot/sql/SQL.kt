@@ -6,10 +6,10 @@ import java.sql.Connection
 
 class SQL {
 
-    var connection: Connection? = null
+    lateinit var connection: Connection
 
     fun isConnected(): Boolean {
-        return connection?.isValid(0) ?: false
+        return connection.isValid(0)
     }
 
     fun connect() {
@@ -25,14 +25,14 @@ class SQL {
         connection = java.sql.DriverManager.getConnection("jdbc:mysql://$address:$port/$database?useSSL=false", username, password)
         val connection2 = connection
 
-        val statement = connection2?.createStatement()
+        val statement = connection2.createStatement()
         statement?.executeUpdate("CREATE TABLE IF NOT EXISTS $name (username VARCHAR(16) NOT NULL, uuid VARCHAR(36) NOT NULL, PRIMARY KEY (username))")
         statement?.close()
-        connection2?.close()
+        connection2.close()
         connection = java.sql.DriverManager.getConnection("jdbc:mysql://$address:$port/$database?useSSL=false", username, password)
     }
 
     fun disconnect() {
-        if (isConnected()) connection?.close()
+        if (isConnected()) connection.close()
     }
 }

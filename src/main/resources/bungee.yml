@@ -1,0 +1,4 @@
+name: UUIDAuth
+main: com.imdamilan.uuidauthenticator.bungee.UUIDAuth
+version: '${project.version}'
+author: ImDaMilan

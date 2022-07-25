@@ -7,7 +7,6 @@ import com.imdamilan.uuidauthenticator.velocity.config.ConfigReader
 import com.imdamilan.uuidauthenticator.velocity.fileauth.AuthFile
 import com.imdamilan.uuidauthenticator.velocity.fileauth.AuthFileReader
 import com.imdamilan.uuidauthenticator.velocity.premium.MojangAPIAuth
-import com.imdamilan.uuidauthenticator.bungee.sql.SQL
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.LoginEvent
 import com.velocitypowered.api.proxy.Player
@@ -36,7 +35,7 @@ class PlayerJoinListener {
         }
 
         if (ConfigReader.config.databaseAuthEnabled) {
-            val sql: SQL? = UUIDAuthVelocity.sql
+            val sql = UUIDAuthVelocity.sql
             try {
                 connection = UUIDAuthVelocity.sql?.connection
                 val name = player.username
@@ -62,7 +61,7 @@ class PlayerJoinListener {
                 }
 
             } catch (e: SQLNonTransientException) {
-                if (sql?.isConnected == true) sql.disconnect()
+                if (sql?.isConnected() == true) sql.disconnect()
                 sql?.connect()
                 event.player.disconnect(Component.text("The server had to reconnect to the database, please, try to join again in a few seconds."))
             }
@@ -80,7 +79,7 @@ class PlayerJoinListener {
         val name = player.username
 
         if (ConfigReader.config.databaseAuthEnabled) {
-            if (!UUIDAuthVelocity.sql?.isConnected!! || connection == null) {
+            if (!UUIDAuthVelocity.sql?.isConnected()!! || connection == null) {
                 UUIDAuthVelocity.sql?.connect()
                 connection = UUIDAuthVelocity.sql!!.connection
             }
@@ -120,7 +119,7 @@ class PlayerJoinListener {
         }
 
         if (ConfigReader.config.databaseAuthEnabled) {
-            if (!UUIDAuthVelocity.sql?.isConnected!! || connection == null) {
+            if (!UUIDAuthVelocity.sql?.isConnected()!! || connection == null) {
                 UUIDAuthVelocity.sql?.connect()
                 connection = UUIDAuthVelocity.sql!!.connection
             }

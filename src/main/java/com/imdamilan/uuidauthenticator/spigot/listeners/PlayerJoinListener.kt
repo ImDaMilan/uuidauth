@@ -15,8 +15,8 @@ import java.util.*
 
 class PlayerJoinListener : Listener {
 
-    private var sql: SQL? = null
-    private var connection: Connection? = null
+    private lateinit var sql: SQL
+    private lateinit var connection: Connection
     private var tableName = "uuid_authenticator"
     private val config: FileConfiguration = UUIDAuthenticator.getConfig()
 
@@ -26,7 +26,7 @@ class PlayerJoinListener : Listener {
             try {
                 tableName = config.getString("database.table-name").toString()
                 sql = UUIDAuthenticator.getSQL()
-                connection = sql!!.connection
+                connection = sql.connection
 
                 val player = event.player
                 val name = player.name
@@ -42,7 +42,7 @@ class PlayerJoinListener : Listener {
                 if (!playerExists(player)) newPlayer(player)
                 try {
                     val statement =
-                        connection?.prepareStatement("SELECT uuid FROM $tableName WHERE username = '$name'")!!
+                        connection.prepareStatement("SELECT uuid FROM $tableName WHERE username = '$name'")!!
                     val result = statement.executeQuery()
                     var uuidFromDatabase = ""
 
@@ -52,14 +52,14 @@ class PlayerJoinListener : Listener {
                         }
                     }
                     if (uuidFromDatabase != uuid.toString()) {
-                        player.kickPlayer("Your UUID is not matching to your username, are you trying to access someone else's account? If you believe this is a mistake, contact the server's admin.")
+                        player.kickPlayer(config.getString("kick-message"))
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
             } catch (e: SQLNonTransientException) {
-                if (sql?.isConnected() == true) sql!!.disconnect()
-                sql?.connect()
+                if (sql.isConnected()) sql.disconnect()
+                sql.connect()
                 event.player.kickPlayer("The server had to reconnect to the database, please, try to join again in a few seconds.")
             }
         } else if (config.getBoolean("file-auth.enabled")) {
@@ -79,7 +79,7 @@ class PlayerJoinListener : Listener {
 
             val uuidFromFile = FileAuth.getAuthenticationFile()?.getString(name)
             if (uuidFromFile != uuid.toString()) {
-                player.kickPlayer("Your UUID is not matching to your username, are you trying to access someone else's account? If you believe this is a mistake, contact the server's admin.")
+                player.kickPlayer(config.getString("kick-message"))
             }
         }
     }
@@ -89,7 +89,7 @@ class PlayerJoinListener : Listener {
         if (config.getBoolean("database.enabled")) {
             try {
                 val sql = "SELECT * FROM $tableName WHERE `username` = '$name'"
-                val result = connection?.createStatement()?.executeQuery(sql) ?: return false
+                val result = connection.createStatement()?.executeQuery(sql) ?: return false
                 if (result.next()) {
                     return true
                 }
@@ -98,7 +98,7 @@ class PlayerJoinListener : Listener {
             }
             return false
         } else if (config.getBoolean("file-auth.enabled")) {
-            return FileAuth.getAuthenticationFile()?.contains(name) ?: false
+            return (FileAuth.getAuthenticationFile()?.contains(name) == true || FileAuth.getAuthenticationFile()?.contains("players.$name") == true)
         } else return false
     }
 
@@ -117,7 +117,7 @@ class PlayerJoinListener : Listener {
         if (config.getBoolean("database.enabled")) {
 
             val sql = "INSERT INTO $tableName (username, uuid) VALUES ('$name', '$uuid')"
-            connection?.createStatement()?.executeUpdate(sql)
+            connection.createStatement()?.executeUpdate(sql)
 
         } else if (config.getBoolean("file-auth.enabled")) {
             FileAuth.getAuthenticationFile()?.addDefault(name, uuid.toString())
