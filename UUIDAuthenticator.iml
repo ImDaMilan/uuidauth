@@ -96,6 +96,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.spongepowered:configurate-gson:3.7.2" level="project" />
     <orderEntry type="library" name="Maven: org.bstats:bstats-bukkit:3.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.bstats:bstats-base:3.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.bstats:bstats-bungeecord:3.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.bstats:bstats-velocity:3.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.3" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.13.3" level="project" />

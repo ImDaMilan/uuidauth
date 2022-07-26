@@ -9,7 +9,7 @@ class DisconnectCommand : SimpleCommand {
     override fun execute(invocation: SimpleCommand.Invocation?) {
         val sql = UUIDAuthVelocity.sql
         if (sql != null) {
-            if (sql.isConnected) {
+            if (sql.isConnected()) {
                 sql.disconnect()
                 invocation?.source()?.sendMessage(Component.text("Disconnected from database!"))
             } else {

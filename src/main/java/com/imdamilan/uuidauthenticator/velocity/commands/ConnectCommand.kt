@@ -7,7 +7,7 @@ import net.kyori.adventure.text.Component
 class ConnectCommand : SimpleCommand {
     override fun execute(invocation: SimpleCommand.Invocation?) {
         val sql = UUIDAuthVelocity.sql
-        if (sql!!.isConnected) {
+        if (sql!!.isConnected()) {
             sql.disconnect()
             try {
                 sql.connect()
