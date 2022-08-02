@@ -80,14 +80,14 @@ class UUIDAuthenticator : JavaPlugin() {
     private fun initConfig() {
         this.saveDefaultConfig()
         configFile = this.config
-        configFile.addDefault("database.enabled", true)
+        configFile.addDefault("database.enabled", false)
         configFile.addDefault("database.address", "localhost")
         configFile.addDefault("database.port", 3306)
         configFile.addDefault("database.name", "minecraft")
         configFile.addDefault("database.username", "root")
         configFile.addDefault("database.password", "")
         configFile.addDefault("database.table-name", "uuid_authenticator")
-        configFile.addDefault("file-auth.enabled", true)
+        configFile.addDefault("file-auth.enabled", false)
         configFile.addDefault("kick-message", "Your UUID is not matching to your username, are you trying to access someone else's account? If you believe this is a mistake, contact the server's admin.")
         configFile.addDefault("autoupdate-enabled", true)
         configFile.options().copyDefaults(true)

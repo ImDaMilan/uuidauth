@@ -5,6 +5,7 @@ import net.md_5.bungee.config.Configuration
 import net.md_5.bungee.config.ConfigurationProvider
 import net.md_5.bungee.config.YamlConfiguration
 import java.io.File
+import java.nio.file.Path
 
 class FileAuth {
 
@@ -13,7 +14,12 @@ class FileAuth {
         private lateinit var file: File
 
         fun initAuthFile() {
-            file = File(UUIDAuth.instance.dataFolder, "auth.yml")
+            val path: Path = File(UUIDAuth.instance.proxy.pluginsFolder.absolutePath + "\\UUIDAuth").toPath().toAbsolutePath()
+            if (!path.toFile().exists()) {
+                path.toFile().mkdir()
+            }
+
+            val file = File(path.toString(), "auth.yml")
             if (!file.exists())
                 file.createNewFile()
             authFile = ConfigurationProvider.getProvider(YamlConfiguration::class.java).load(file)
