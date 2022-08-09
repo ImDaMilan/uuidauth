@@ -26,7 +26,10 @@ class SQL {
         val connection2 = connection
 
         val statement = connection2.createStatement()
-        statement?.executeUpdate("CREATE TABLE IF NOT EXISTS $name (username VARCHAR(16) NOT NULL, uuid VARCHAR(36) NOT NULL, PRIMARY KEY (username))")
+        statement?.executeUpdate(
+            "CREATE TABLE IF NOT EXISTS $name " +
+                "(username VARCHAR(16) NOT NULL, uuid VARCHAR(36) NOT NULL," +
+                " premium BOOLEAN NOT NULL, pass VARCHAR(16) NOT NULL, PRIMARY KEY (username))")
         statement?.close()
         connection2.close()
         connection = java.sql.DriverManager.getConnection("jdbc:mysql://$address:$port/$database?useSSL=false", username, password)

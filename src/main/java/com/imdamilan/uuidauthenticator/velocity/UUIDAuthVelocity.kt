@@ -6,8 +6,8 @@ import com.imdamilan.uuidauthenticator.velocity.commands.DisconnectCommand
 import com.imdamilan.uuidauthenticator.velocity.config.ConfigReader
 import com.imdamilan.uuidauthenticator.velocity.fileauth.AuthFileReader
 import com.imdamilan.uuidauthenticator.velocity.listeners.PlayerJoinListener
-import com.imdamilan.uuidauthenticator.bungee.sql.SQL
-import com.imdamilan.uuidauthenticator.bungee.update.Update
+import com.imdamilan.uuidauthenticator.velocity.sql.SQL
+import com.imdamilan.uuidauthenticator.velocity.update.Update
 import com.velocitypowered.api.command.CommandMeta
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent

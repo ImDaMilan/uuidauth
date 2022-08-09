@@ -24,7 +24,9 @@ class SQL {
         connection =
             DriverManager.getConnection("jdbc:mysql://$address:$port/$database?useSSL=false", username, password)
         val statement =
-            connection.prepareStatement("CREATE TABLE IF NOT EXISTS `$tableName` (`username` VARCHAR(16) NOT NULL , `uuid` VARCHAR(36) NOT NULL, PRIMARY KEY (`username`)) ENGINE = InnoDB;")
+            connection.prepareStatement("CREATE TABLE IF NOT EXISTS $tableName " +
+                    "(username VARCHAR(16) NOT NULL, uuid VARCHAR(36) NOT NULL," +
+                    " premium BOOLEAN NOT NULL, pass VARCHAR(16) NOT NULL, PRIMARY KEY (username))")
         statement?.executeUpdate()
         statement?.close()
     }
